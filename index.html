@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: hsl(76, 100%, 70%);
+      overflow: hidden;
+    }
+
+    #gameArea {
+      width: 100%;
+      height: 300px;
+      background: rgb(194, 238, 255);
+      border-bottom: 3px solid #333;
+      position: relative;
+    }
+
+    #dino {
+      width: 80px;
+      height: 80px;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+    }
+
+    #obstacle {
+      width: 60px;
+      height: 100px;
+      position: absolute;
+      bottom: 0;
+      left: 100%;
+      animation: moveObstacle 2s linear infinite;
+    }
+
+    @keyframes moveObstacle {
+      0% {
+        left: 100%;
+      }
+      100% {
+        left: -60px;
+      }
+    }
+
+    .jump {
+      animation: jump 0.5s ease;
+    }
+
+    @keyframes jump {
+      0% { bottom: 0; }
+      50% { bottom: 100px; }
+      100% { bottom: 0; }
+    }
+
+    #score {
+      padding: 10px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="score">Pontuação: <span id="scoreValue">0</span></div>
+<div id="gameArea">
+  <!-- Aqui trocamos as divs por imagens -->
+  <img id="dino" src="dino.png">
+  <img id="obstacle" src="cacto.png">
+</div>
+
+<script>
+  const dino = document.getElementById("dino");
+  const obstacle = document.getElementById("obstacle");
+  const scoreSpan = document.getElementById("scoreValue");
+
+  let score = 0;
+  let jumping = false;
+
+  document.addEventListener("keydown", function(e) {
+    if (e.code === "Space" && !jumping) {
+      dino.classList.add("jump");
+      jumping = true;
+      setTimeout(() => {
+        dino.classList.remove("jump");
+        jumping = false;
+      }, 500);
+    }
+  });
+
+  const checkCollision = setInterval(() => {
+    const dinoBottom = parseInt(window.getComputedStyle(dino).getPropertyValue("bottom"));
+    const obstacleLeft = obstacle.getBoundingClientRect().left;
+
+    if (obstacleLeft < 90 && obstacleLeft > 50 && dinoBottom < 40) {
+      alert("Game Over! Pontuação: " + score);
+      score = 0;
+      scoreSpan.textContent = score;
+    }
+  }, 10);
+
+  const updateScore = setInterval(() => {
+    score++;
+    scoreSpan.textContent = score;
+  }, 500);
+</script>
+
+</body>
+</html>
